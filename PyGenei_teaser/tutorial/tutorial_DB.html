@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+
+		<!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame
+		Remove this if you use the .htaccess -->
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+		<title>PyGenei_Tutorial</title>
+		<meta name="description" content="">
+		<meta name="author" content="legitz7">
+		<meta name="viewport" content="width=device-width; initial-scale=1.0">
+
+		<link rel="stylesheet" type="text/css" href="docStyle.css">
+		
+	<body>
+		
+			<header>
+				<h1>PyGenei Tutorial: Database Interaction</h1>
+			</header>
+			
+
+<div id="Databases"><h2>Databases</h2>
+					<h3> Conquering the Object-Relational Impedance Mismatch</h3>
+				A primary challenge in mapping objects to relational tuples is that the notion of inheritance is unique to objects. Perhaps unfortunately, the idea of genomeObjs as a special subclass of sequenceObjs is a fairly
+				textbook case of inheritance (although it is actually implemented as a composition instead, with the <em>Genome</em> class containing a .visibleSequence object, which is instantiated as a sequenceObj.) The need to run metrics or queries on either sequenceObjs alone, or some combination of genomeObjs and 
+				sequenceObjs, requires full compatibility between the relational representations of the two objects in at least one direction. Since using the full genome sequence string in a database would largely defeat the purpose of an 
+				independent genome object, the sequenceObj is made fully compatibile with the genomeObj instead. 
+				<br><br>This is implemented by using a boolean discriminator column for each database entry, paired with a requirement that the user specify for each query
+				whether the query is or is not to include genome objects (default conveniently set to no). Then, the SEQUENCE field of a genomeObj is made null within the database (as opposed to the full VARCHAR for generic sequenceObjs), whereas both types are associated with an external file containing the sequence,
+				Thus, sequenceObj-only queries use the convenient direct RDB column for their searches (permitting raw SQL), whereas searches specifying sequence motifs (ie with regexes)  including full genomes must be implemented via Python.
+				However, the RDBMS maintains a directory listing for each sequence file under the SeqFile column, so that the information needed to perform any non-RDBMS evaluation is made fully available to Python by the RDBMS.
+				<br><br>
+				This distinction turns out to be useful in other cases as well, particularly when one wishes to search the results of analytical metrics with forms not easily representable in types supported in an RDB.
+				Whenever such a query is requested, the RDBMS (<a href="PostgreSQL.html">PostgreSQL</a>) will first return a table containing all preliminary candidates, along with pointers to each of their files containing the information queried, which Python will use to accomplish the final narrowing.
+				<hr>
+				<h3> The SequenceObj/GenomeObj Relational Structure</h3>
+				As mentioned in the previous paragraph, sequenceObjs and genomeObjs are stored side-by-side as comparable, compatible entries in the same database master table. 
+				The subtleties are covered by a simple <em>isGenome</em> boolean discriminator column. 
+				<!--Below, we maintain a listing of all s/gObj columns: --> <br>
+
+</div>
+<div id="relational">
+				<dl>
+					<dt>isGenome</dt> <dd><em>boolean</em>; denotes whether we this is a genomeObj</dd>
+					<dt>Alphabet</dt><dd><em>varchar(1)</em>; denotes whether we are dealing with nucleic acid <b>N</b>, or amino acid <b>A</b>, or a custom user-created alphabet.</dd>
+					<dt>Sequence</dt><dd><em>NotYetDecided</em></dd>
+					<dt>rSequence</dt><dd><em></em>Might as well compute these operations once and store them, so that they are directly queryable. Only valid for sequenceObjs (isGenome==False).</dd>
+					<dt>rcSequence</dt><dd><em></em>See above</dd>
+					<dt>cSequence</dt><dd><em></em>See above</dd>
+					<dt></dt><dd><em></em></dd>
+					<dt>SeqLength</dt><dd><em>bigint</em>; convenience column so that sequence-size counting is predone in Python (faster)</dd>	
+					<dt>SeqFile</dt><dd><em>varchar</em>; Here, we store an ASCII text file of the sequence</dd>
+					<dt>Metrics</dt><dd><em>foreign key</em>; this is a foreign key to a Metric Instance (distinct table), which contains file pointers, summary scores, an analysis dict/hstore, and metadata</dd>																			
+					<dt>structureFile</dt><dd><em>varchar</em>; link to a pdb file or similar for visualization</dd>
+					<dt>Phylogenetics</dt><dd><em>hstore</em>; standard kpcofgs dict, plus subspecies and superkingdom for viral vs synthetic vs living. entries are NULLable</dd>
+					<dt>Organism</dt><dd><em>foreign key</em>; actual link to organism in table. Most important properties of organisms are their codon tables, and codon usage tables.</dd>
+					<dt>Refs</dt><dd><em>foreign key</em>; refs table should allow either plain title, authors, date, file-link OR calibre integration</dd>
+					<dt>Translations</dt><dd><em>foreign key</em>;</dd> 1:n for Alphabet=N, 1:1 for Alphabet=A. Translations are mapped via a given codon table, which is exists in a table 
+					<dt>Notes</dt><dd><em>varchar</em>; simple column, allows users to make notes</dd>
+					<dt>Children</dt><dd><em>foreign key</em>; links to subsequences or features</dd>
+					<dt>Parent</dt><dd><em>foreign key;</em>; link to a larger sequence from which the given sequence is derived</dd>
+					<dt>Friends</dt><dd><em>foreign key</em>; link to other sequences that the given sequence is believed to interact with</dd>
+					<dt>Compounds</dt><dd><em>foreign key</em>; allows association of sequences with small molecules (distinct table to be implemented in future)</dd>					
+					<dt>Tags</dt><dd><em>varchar</em>; m:n, allows grouping and possibly some elementary graph-theoretic/interactomic work</dd>
+					<dt></dt><dd><em></em></dd>
+					<dt></dt><dd><em></em></dd>
+					<dt></dt><dd><em></em></dd>
+					<dt></dt><dd><em></em></dd>
+					<dt></dt><dd><em></em></dd>
+					<dt></dt><dd><em></em></dd>
+										
+				</dl>
+				</div>
+				<hr>
+				<div id="objdefs">
+					<dl>
+										<dt>isGenome</dt> <dd><em>boolean</em>; denotes whether we this is a genomeObj</dd>
+					<dt>Alphabet</dt><dd><em>varchar(1)</em>; denotes whether we are dealing with nucleic acid <b>N</b>, or amino acid <b>A</b>, or a custom user-created alphabet.</dd>
+					<dt>Sequence</dt><dd><em>NotYetDecided</em></dd>
+					<dt>rSequence</dt><dd><em></em>Might as well compute these operations once and store them, so that they are directly queryable. Only valid for sequenceObjs (isGenome==False).</dd>
+					<dt>rcSequence</dt><dd><em></em>See above</dd>
+					<dt>cSequence</dt><dd><em></em>See above</dd>
+					<dt></dt><dd><em></em></dd>
+					<dt>SeqLength</dt><dd><em>bigint</em>; convenience column so that sequence-size counting is predone in Python (faster)</dd>	
+					<dt>SeqFile</dt><dd><em>varchar</em>; Here, we store an ASCII text file of the sequence</dd>
+					<dt>Metrics</dt><dd><em>foreign key</em>; this is a foreign key to a Metric Instance (distinct table), which contains file pointers, summary scores, an analysis dict/hstore, and metadata</dd>																			
+					<dt>structureFile</dt><dd><em>varchar</em>; link to a pdb file or similar for visualization</dd>
+					<dt>Phylogenetics</dt><dd><em>hstore</em>; standard kpcofgs dict, plus subspecies and superkingdom for viral vs synthetic vs living. entries are NULLable</dd>
+					<dt>Organism</dt><dd><em>foreign key</em>; actual link to organism in table. Most important properties of organisms are their codon tables, and codon usage tables.</dd>
+					<dt>Refs</dt><dd><em>foreign key</em>; refs table should allow either plain title, authors, date, file-link OR calibre integration</dd>
+					<dt>Translations</dt><dd><em>foreign key</em>;</dd> 1:n for Alphabet=N, 1:1 for Alphabet=A. Translations are mapped via a given codon table, which is exists in a table 
+					<dt>Notes</dt><dd><em>varchar</em>; simple column, allows users to make notes</dd>
+					<dt>Children</dt><dd><em>foreign key</em>; links to subsequences or features</dd>
+					<dt>Parent</dt><dd><em>foreign key;</em>; link to a larger sequence from which the given sequence is derived</dd>
+					<dt>Friends</dt><dd><em>foreign key</em>; link to other sequences that the given sequence is believed to interact with</dd>
+					<dt>Compounds</dt><dd><em>foreign key</em>; allows association of sequences with small molecules (distinct table to be implemented in future)</dd>					
+					<dt>Tags</dt><dd><em>varchar</em>; m:n, allows grouping and possibly some elementary graph-theoretic/interactomic work</dd>
+					
+					</dl>
+					
+					
+					
+				</div>
+
+
+	<a href="tutorial_Metrics.html">Previous page: <b>Introduction to Metrics</b></a><br>	
+		
+	</body>
+</html>

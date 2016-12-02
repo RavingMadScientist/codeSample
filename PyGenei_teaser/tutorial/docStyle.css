@@ -1,0 +1,16 @@
+*{
+	background-color: rgb(255,245,225);
+	color: rgb(20,20,100);
+}
+h2{
+	color: rgb(20,20,100);
+}
+
+.text { font-family: sans-serif ;} 
+
+#mainBody {
+	position: absolute;
+	top: 100px;
+	left: 250px;
+	max-width: 800px;}
+

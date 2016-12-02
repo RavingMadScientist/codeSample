@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+
+		<!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame
+		Remove this if you use the .htaccess -->
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+		<title>PyGenei</title>
+		<meta name="description" content="">
+		<meta name="author" content="legitz7">
+
+		<meta name="viewport" content="width=device-width; initial-scale=1.0">
+		<!--
+		<link href="PyGenei.css" rel="stylesheet" type="text/css">
+		-->
+		<link rel="stylesheet" type="text/css" href="tutorial/docStyle.css">
+
+	<body>
+		
+			<header>
+				<h1>PyGenei</h1>
+			</header>
+		<div id="intro">
+			<h2>What is it?</h2>
+			There's a lot of molecular biology software out there already. So why would I want to write more? Because, in short, I couldn't find any package out there to be versatile enough
+			to meet my needs, and one of the great perks of being a programmer is that, if you're willing to put in the time, you can essentially be as anal as you want about the software that 
+			you use to complete some arbitrary task. To be more specific, I've used several open-source and commercial packages in the course of my molecular biology work including Geneious, 
+			UGENE, VectorNTI and BioPython, but they always seem to fit into one of two camps: <br>
+			either (1) they're targeted towards the working experimental molecular biologist, in which case you get a nice UI with pretty graphics, and a suite of standard analysis routines
+			(base pair/AA breakdown, restriction digests, codon analysis, and maybe an export to a standard computational suite like EMBOSS), or <br>
+			(2) they enable sophisticated or customized metrics, but are designed only for usage via the command-line, such that access to and from any centralized GUI application for point-click visual
+			 analysis and comparison is clunky at best.
+			 <br>
+			 Finally, the object-relational impedance mismatch being what it is, none of the programs that I've used has been conducive to sequence storage within an SQL database,
+			 meaning that querying a sequence collection by some arbitrary collection of sequence properties in order to find motifs and hidden similarities is inefficient at best.
+			 
+			 <br><br> ...and so we have PyGenei.
+			 <br><h3>Who's It For?</h3>
+			 (1) Experimentalists or bioinformaticians, who want to maintain a sequence collection in a searchable database.<br>
+			 (2) Folks who like to write their own metrics and analytical schemes, and see the results in an aesthetically pleasing framework.<br>
+			 (3) People who need to deal with genomes or other very long sequences in the same environment as more "normally" sized sequences, without putting undue strain on their computer.
+			 <br>
+			 <h2> So how does it work?</h2>
+			 PyGenei revolves around the idea that there are a few main things that one would like to be able to do with nucleic acid and amino acid sequences:
+			 
+			 	<ol> 
+			 		<li>Import and export them, or make them from scratch</li>
+			 		<li>Look at them, and compare them visually</li>
+			 		<li>Edit, split, and merge them</li>
+			 		<li>Analyze them</li>
+			 		<li>Store them in a database, and search the database for sequences satisfying certain properties</li>
+			 		</ol>
+		</div>
+		<hr>
+		<div id="Implementation">
+			<div id="impIntro">
+			<h2> So how is it done?</h2>
+			<p> The heart of the program is the sequenceObj, which is implemented as a Python class. 
+				In my first, ill-fated attempt at writing this suite I actually used the BioPython SeqObjects explicitly, but ultimately even that framework turned out to be too limiting 
+				in terms of its enforced structure. So now, the key attribute of each sequenceObj is its Sequence, which is a simple Python String.
+				</p>
+				<p>
+				There is a second, very important (to some folks) object used in PyGenei, which is the genomeObj. The reason for this object is that while genomes are a very important part of molecular and computational biology, 
+				they are also usually problematically large, making them inconvenient to view, or for a computer to manipulate on the typical timescale of a GUI. 
+				In order to overcome these difficulties, the genomeObj is associated, at any given time, with a genomeView, which can be manipulated via the same editScreen as normal sequenceObjs. The genomeView behaves identically to 
+				a user-created sequenceObj within the main application window, unless the user wishes to perform metrics upon it, in which case the user is asked whether he/she wishes to perform the metric upon the entire genome (often an expensive computation), or 
+				copy the genomeView into a bona-fide sequenceObj that is independent of its parent genomeObj.
+				</p>
+				</div>	
+
+
+
+				
+				</div>
+
+		
+	</body>
+</html>

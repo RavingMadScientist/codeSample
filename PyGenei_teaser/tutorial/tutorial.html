@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+
+		<!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame
+		Remove this if you use the .htaccess -->
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+		<title>PyGenei_Tutorial</title>
+		<meta name="description" content="">
+		<meta name="author" content="legitz7">
+		<meta name="viewport" content="width=device-width; initial-scale=1.0">
+
+		<link rel="stylesheet" type="text/css" href="docStyle.css">
+
+	<body>
+		
+			<header>
+				<h1>Basic Tutorial: PyGenei</h1>
+			</header>
+			
+		<div id="intro"><h3>Intro</h3>
+
+		</div>
+		
+		<div id = "sequenceObj"> <h2>The sequenceObj (and related classes)</h2>
+<p>The core objects are defined in the sequenceObjects module. The most basic object is the <em>sequenceObj</em>. We can create and manipulate sequenceObjs
+from any Python Interpreter, or via the GUI accompanying the package. sequenceObjs are initially generated from strings, or from online sequence databases, such as NCBI GenBank, EMBL-ENA, or the DDBJ.
+ Later we will learn to load them from our own databases and files as well.
+	To create a sequenceObj from an acceptable string using the <em>makeSeq</em> function, we could use the following commands: </p>			
+				
+<pre><code>
+>>>import sys
+>>>sys.path.append ($sequenceObjects_Directory)
+>>>import sequenceObjects
+>>>a="TACTATCTACTACTATC"
+>>>aseq=sequenceObjects.makeSeq(a)
+Sequence initialization completed: 
+quickieSeq, 17 bp
+>>> aseq.Sequence
+'TACTATCTACTACTATC'
+>>> aseq.rSequence
+'CTATCATCATCTATCAT'
+>>> aseq.cSequence
+'ATGATAGATGATGATAG'
+</code></pre>
+
+<p>As you can see, the sequenceObj has properties such as reverse and complementary sequence strings calculated upon initialization. If we want to use an amino acid sequence instead,
+	no complementary sequence string will be calculated. To be as friendly as possible, submitting a string with "illegal" characters (ie 'ATGYCC' as a nucleotide) does not cause the function to fail-
+	rather, the error is caught and the sequenceObj is merely assigned an alphabet of 'X' (which will of course limit the metrics that can be successfully run on the sequence)
+	</p>
+	
+	
+<pre><code>
+>>> b='WYQTRSFCCAV'
+>>> bseq=sequenceObjects.makeSeq(b, alp='A')
+Sequence initialization completed: 
+quickieSeq, 11 aa
+>>> bseq.rSequence
+'VACCFSRTQYW'	
+>>> bseq.cSequence
+''	
+>>> bseq.alphabet
+'A'
+>>> cseq=sequenceObjects.makeSeq(b, alp='N')
+Sequence initialization completed: 
+quickieSeq, 11 bp
+>>> cseq.alphabet
+'X'
+>>> cseq.rSequence
+'VACCFSRTQYW'
+>>> cseq.cSequence
+''	
+</code></pre>
+
+<hr>
+
+<p>A second way of creating a <em>sequenceObj</em> is by parsing it from a global sequence database, using <em>retrieveFrom</em> functions built on the Requests framework. At present, retrieved sequences are stored as files, 
+	and are delivered as such to the <em>loadFrom</em> function corresponding to the retrieved file format. For instance, we could generate a <em>sequenceObj</em> from the CRY2 cryptochrome gene of the 
+	cotton bollworm, <em>Helicoverpa armigera</em>, from DDBJ using the following sequence of commands:</p>
+
+<pre><code>
+>>> ff=sequenceObjects.retrieveFromDDBJ('JQ713137')
+record retrieved: JQ713137
+>>> crypto=sequenceObjects.loadFromFASTA(ff)
+Sequence initialization completed: 
+JQ713137.1 Helicoverpa armigera cryptochrome CRY2-2 mRNA, complete cds.
+, 2809 bp
+>>> crypto.Sequence
+'GCATTGTTGATCTGAACTTCGAAAAAAATTCGAACAATTTCATTATTCATAATTAAAACAGTGTTTTTTTGATCGTCTATCCACCGAACAATTCGGTTTGGTACTAAATTCAAGTTCCTAAAGTCTGTCACTAGCAGGGTTTGTTAATTAAGTGATTGACTTGTTACAAGTTTGTTCTGTGTAATATATTTTACTGGACTGTGATCTGAAATTTATTATATGGAAGTTGATAGAGGTTTCTACTGCAGTGTCTGGAAGACTTGGACAGTAGCTTGAGGAAACTTAACTCTCGGCTGTTCGTGGTTCGAGGGCAACCCGCGGACGCTTTACCCAAATTGTTTCGAGAATGGGGAACCACGGCTTTGACCTTCGAAGAGGATCCCGAGCCTTATGGCAGAGTGCGGGACCACAATATTATGTCCAAATGTCGCGAAGTTGGCATTACCGTCACGTCTCGCGTATCCCACACTCTATACAAGTTAGACCAAATTATAGAACGGAATGGTGGCAAAGCGCCTCTTACGTACCACCAGTTCCAAGCATTGATCGCAGGCATGCCTCCCCCTCCGCCGGCGGAGGCGCCCATATCAGCACAAATGCTAAACGGAGCCACCACGCCATTGAACGATGACCATGATGATCGATTCGGCGTTCCCACTCTTGAAGAACTCGGATTCGAGACTGAAGGTTTAAAACCACCTGTTTGGATCGGAGGAGAAAGTGAAGCCCTTGCGAGGTTAGAAAGACACCTCGAAAGAAAAGCATGGGTTGCTTCATTCGGGAGACCCAAAATGACACCGCAGTCGCTGTTGGCTAGTCAGACAGGTTTATCACCGTACTTAAGGTTTGGCTGTTTGTCAACTAGATTATTCTATTATCAGTTGACGGAGTTGTACAAAAGAGTTAAAAGAGTAAGACCACCGCTATCTCTTCATGGACAAATACTATGGAGGGAGTTTTTCTATTGTGCCGCCACACGCAATCCTAATTTTGATCGAATGGAAGGAAATCCTATCTGTGTCCAAATACCTTGGGAAAAAAATCAAGAAGCTTTAGCGAAGTGGGCTAGTGGTCAAACTGGTTTCCCATGGATAGATGCGATAATGATCCAATTAAGAGAGGAAGGGTGGATTCATCATTTAGCGAGGCATGCCGTGGCTTGCTTCCTAACGAGAGGCGACTTATGGATCTCGTGGGAAGAAGGAATGAAGGTGTTCGACGAATTGCTTCTTGACGCCGACTGGTCCGTCAATGCGGGCATGTGGATGTGGCTATCGTGCTCATCATTCTTCCAACAATTTTTCCACTGCTATTGTCCAGTCCGTTTCGGCAGAAAAACTGATCCTAACGGTGATTTTATCAGAAGATACATTCCGGCGTTGAAGAACATGCCGACTAGGTATATCCACGAGCCGTGGGTGGCACCCGAAGCGGTGCAACAGTCGGCGCGGTGCATCATCGGCCGCGACTACCCGATGCCCATGGTGGACCACTCGAAAGCGTCACAGGTCAACATCGAACGTATCAAACAAGTATACGCCCAGCTTGCAAAATACAAACCCCAAGGCACACTAAATCCCAATGCTGTACAACGCCCCAATGTCATGCAGTCATCACCAAGCCCGAACTCAATTATAACCAGCATCAACCAGTCGAACTACTTGTGCAGTCAAACACCAGATCCACAGCCTTCACCACAAATTATACCCTACAAGGACAATGATGTTGTGTCCCAAAAGCCAATGAACCACCGCTCTATGAAACCTTCATTTAAACAAGTTGTTATCGTACAAAAGAAACAAAATACTAACGTCATACAAACAGTGTCCAATTGCACGCCACAGTCGAAAGAAAACTATGCAGTCAACGGACAAATGGATAACTCGTACAAAACGCCAATAAATGAGACCTTACAATCAGCGAAACAAGAAAAATATGACTTTAAAAACTTAGTTATAAATAACTATGTTCAAGACTACTCAAATAACCAAGAAATTTTCCAGAATGAGCAACAAAACAGGGACAATATGTATGAACAAGAAACATTAAAAATAAATAATTTCAGTTATGAGAAACAGAAATTCTATTTGTCTAATTACACAGAGAATGGGCTGCGTATAGCAGCCGTGCACAACGACACACCCGCACCTTTCGTCGCAGCACGTAATCACGACTCCACTATGACTTTCAACAGAGAGAACAAGTCAGACACTGGAAAAGACAAGGCTAATGAAAGCACTTGCTTACGTCCAATGTCAATTAACGACGATGGAACCATTACAAATGAAAGTCGACAGAATAATCCGTCTAACGAATGTGGATACAATTCTTCTAATGAAAATCAAAAATGAATAAATTAAACAATAGATTAAATTAGTCATAATCTATTCAGAGTCTGTAGAAAAAATGACACTGATATAATTGGAAATCAATATTTTCTTTTTTGAAGGTATTTTGTAACTGCCATTTTATCTATGAGACTAAAGAAACTTGTTGTTGTATAATATTTTGCCTGAAAGTACAGCAAAGCTGGTTACTTATTTTACAAGTATAATTTTTGAGACAGTTCATATACAACAATGGATCAACTCTTATAAGATTCGTTTTTCTGTATTAACTTACAGTAATATGCGTGTTATGAATATACATGTTACTCAATTACTTTTTCATAATAAGCAAAATTCGTATTAATTTTGTTGTGTACCAGAGCTTCATATTGTGATACCTGTGATTCAGATACCTGAAGCCAATGTTTGAAAACTGTACCTACACCATTTTATGAATTTACGCTTTTCTCATCGTTGACCTA'
+</code></pre>	
+
+<p> Both of these functions allow several optional parameters to be specified (such as the file format to request from DDBJ), which default to reasonable options (such as FASTA, in this case).
+One useful subroutine performed by the loadFrom functions is an educated guess of the correct alphabet. Of course, a metadata-free peptide sequence consisting solely of alanine, cysteine, threonine and glycine residues will "pass muster" as a nucleic acid sequence, 
+but a desired alphabet can also easily be explicitly assigned to the .alphabet property of a sequenceObj after instantiation. 
+<br><br>More importantly, we are confronted with the realization known to every working molecular biologist: <br><em>Long strings of serial data derived from a small character set are very difficult for the human brain to interpret incisively</em> <br>
+This problem can be alleviated to some extent by an intelligent text-display+navigation GUI, but to get any sort of "feel" for sequences at the genomic scale, more sophisticated analytical metrics are going to be necessary.	
+	</p>	
+		</div>
+<hr><hr>
+
+	<a href="tutorial_Metrics.html">Next page: <b>Introduction to Metrics</b></a><br>		
+	</body>
+</html>

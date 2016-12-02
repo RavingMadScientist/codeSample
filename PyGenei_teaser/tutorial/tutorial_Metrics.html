@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+
+		<!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame
+		Remove this if you use the .htaccess -->
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+		<title>PyGenei_Tutorial</title>
+		<meta name="description" content="">
+		<meta name="author" content="legitz7">
+		<meta name="viewport" content="width=device-width; initial-scale=1.0">
+
+		<link rel="stylesheet" type="text/css" href="docStyle.css">
+
+	<body>
+		
+			<header>
+				<h1>PyGenei Tutorial: Metrics</h1>
+			</header>
+			
+		<div id="intro"><h3>Intro</h3>
+
+		</div>
+
+<div id="Metrics"><h2>Metrics</h2>
+	<p>	
+		We initialize a Metric by instantiating the sequenceObjects.Metric class, which is the same module where we find things like
+		sequenceObj, genomeObj and Translation defined. We always pass three arguments to the Metric constructor: <em>typeName</em>, <em>seqList</em>, and <em>specsList</em>.
+		<!--These arguments should usually be gathered by a <strong>MetricWidget</strong> of some sort (this is a separate module which has more or less a picker which chooses the setup MetricWidget,
+		which is subclassed sort of MetricWidget, but has some conserved behaviors when the "Go" button is impressed
+		(not unlike the screenInWidget / superScreenInWidget combo in the NetSearchWidgets that import sequences from the internet, 
+		where the parser must be individually selected but the import mechanics once some specification dict has been produced are relatively well conserved.
+		-->
+		To simplify GUI-driven MetricRoutine initiation (since we must expect that these routines can require computation times much larger than a GUI refresh period),
+		all MetricRoutines are generally executed by a call to the MetricRoutines.runMetric() wrapper, which permits a generalized thread maintenance approach and some output standardization. However, if you want to call a MetricRoutine directly from an 
+		Interpreter session, you are certainly permitted to. Each MetricRoutine accepts two arguments as input: a list of sequenceObjects, and a dictionary of metadata. The required metadata naturally varies depending on the routine.
+		Output is always in the form of a dictionary, which generally includes generated data in the form of a NumPy array or file, and metadata. There is a unique PyQt widget associated with each MetricRoutine that is able to use the output dictionary to produce a graphic display:
+		 linking each MetricRoutine method to its corresponding output QWidget subclass  is another task performed by the runMetric wrapper function. 
+		 
+		
+		</p>
+
+</div>
+
+	<a href="tutorial.html">Previous page: <b>Introduction to SequenceObjs</b></a><br>	
+	<a href="tutorial_DB.html">Next page: <b>Database Interaction</b></a><br>
+		
+	</body>
+</html>

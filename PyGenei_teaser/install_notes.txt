@@ -1,0 +1,17 @@
+INSTALL NOTES
+---------------------------
+
+Dependencies.
+
+The only third-party library required in the sequenceObjects module is Requests for http generation if you want to download files from the global databases.
+
+MetricRoutines generally run Numpy/SciPy, and their outputs often contain instructions for matplotlib Figures
+
+The actual matplotlib method calls all come from the MetricWidgets module, where generated figures are embedded into a PyQt4 GUI application for further manipulation and study. Eventual separation of these tools into two modules might not be a terrible idea
+
+BioDB can run on psycopg2 or sqlite3 . If you can't get admin access to a PostgreSQL server, SQLite should do just fine
+
+
+I've been running all of this on Python v2.7.6, but there shouldn't be any major compatibility issues with v3 that I can think of
+
+
