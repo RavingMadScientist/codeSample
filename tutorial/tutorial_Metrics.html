@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+
+		<!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame
+		Remove this if you use the .htaccess -->
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+		<title>PyGenei_Tutorial</title>
+		<meta name="description" content="">
+		<meta name="author" content="legitz7">
+		<meta name="viewport" content="width=device-width; initial-scale=1.0">
+
+		<link rel="stylesheet" type="text/css" href="docStyle.css">
+
+	<body>
+		
+			<header>
+				<h1>PyGenei Tutorial: Metrics</h1>
+			</header>
+			
+		<div id="intro"><h3>Intro</h3>
+
+		</div>
+
+<div id="Metrics"><h2>Metrics</h2>
+	<p>	
+		We initialize a Metric by instantiating the sequenceObjects.Metric class, which is the same module where we find things like
+		sequenceObj, genomeObj and Translation defined. We always pass three arguments to the Metric constructor: <em>typeName</em>, <em>seqList</em>, and <em>specsList</em>.
+		<!--These arguments should usually be gathered by a <strong>MetricWidget</strong> of some sort (this is a separate module which has more or less a picker which chooses the setup MetricWidget,
+		which is subclassed sort of MetricWidget, but has some conserved behaviors when the "Go" button is impressed
+		(not unlike the screenInWidget / superScreenInWidget combo in the NetSearchWidgets that import sequences from the internet, 
+		where the parser must be individually selected but the import mechanics once some specification dict has been produced are relatively well conserved.
+		-->
+		To simplify GUI-driven MetricRoutine initiation (since we must expect that these routines can require computation times much larger than a GUI refresh period),
+		all MetricRoutines are generally executed by a call to the MetricRoutines.runMetric() wrapper, which permits a generalized thread maintenance approach and some output standardization. However, if you want to call a MetricRoutine directly from an 
+		Interpreter session, you are certainly permitted to. Each MetricRoutine accepts two arguments as input: a list of sequenceObjects, and a dictionary of metadata. The required metadata naturally varies depending on the routine.
+		Output is always in the form of a dictionary, which generally includes generated data in the form of a NumPy array or file, and metadata. There is a unique PyQt widget associated with each MetricRoutine that is able to use the output dictionary to produce a graphic display:
+		 linking each MetricRoutine method to its corresponding output QWidget subclass  is another task performed by the runMetric wrapper function. 
+		 
+		
+		</p>
+
+</div>
+
+		</div>	
+		<div id="routineList">
+			<h1>Routine APIs</h1><hr>
+			<div id="SummaryPlot">
+				<h2>SummaryPlot</h2><br>
+<p>SummaryPlot provides a means of displaying long-sequence information in a format that is independent of sequence length. It is designed to ameliorate many of the difficulties involved with trying to recognize patterns in long sequences of serial, small character-set data.
+<br>
+The Summary Plot breaks down a sequence into all of its constituent substrings, and displays their relative frequencies in two-dimensional form. The leftmost stack of colored rectangles represents the single-character composition of the sequence. For a character set of cardinality=4,
+each of the four single-character rectangles will be further subdivided into the constituent length=2 substrings to which it gives rise. The pattern is then applied recursively for substrings up to the user-specified 'maxLength' in length.<br><br>  
+We can demonstrate a SummaryPlot using the cryptochrome sequence downloaded in the sequenceObjects tutorial. Note that the 'specs' dict used to contain Metric parameters requires only a 'maxLength' entry, for simplest default operation: 
+	</p>
+
+<pre><code>
+>>> import sequenceObjects as so
+>>> crypFile=str(os.getcwd())+'/data/FASTAfiles/JQ713137.fasta'
+>>> crypFile
+Sequence initialization completed: 
+JQ713137.1 Helicoverpa armigera cryptochrome CRY2-2 mRNA, complete cds.
+, 2809 bp
+>>> specs={'maxLength':3}
+>>> sp=so.Metric('SummaryPlot', [cryp] , specs)
+</code></pre>
+The instantiation of Metric sp under these conditions will generate a live pyplot figure similar to that below. <br><br>
+<img style="border:1px solid black;" src="images/cry_default.png" alt="figure" height="400"><br><br>
+				
+<p>Since the newly generated figure is still the plt.gcf(), we can still perform any pyplot updates on the figure using the interpreter...</p>
+<pre><code>
+>>> import matplotlib.pyplot as plt
+>>> plt.title('More Succinct Title')
+&lt; matplotlib.text.Text object at 0x7f6e898fecd0&gt;
+>>> 
+</code></pre>
+<br>
+<img style="border:1px solid black;" src="images/cry_newtitle.png" alt="figure" height="400"><br><br>	
+			</div>
+
+There are a host of optional parameters that can be specified for SummaryPlots, many pertaining to data display. Among the most important is 'recursive' mode. By default,
+for each substring rectangle that will generate subrectangles (ie, if len(substring) &lt; maxLength), the constituent subrectangles are sorted by their frequency. The nonconserved color ordering enables simplified recognition of substring trends. 
+However, it may also be desirable to generate the spatial color progression according to a regular sequence. In this case, information is gleaned from the spatial organization of the rectangles, rather than the explicit color pattern.    
+<br>
+We will demonstrate the difference below:
+<br>
+<pre><code>
+>>> specsR={'maxLength':3, 'order':'recursive'}
+>>> sp=so.Metric('SummaryPlot', [cryp] , specsR)
+</code></pre>
+<img style="border:1px solid black;" src="images/cry_recursive.png" alt="figure" height="400"><br><br>
+<p> Other important options that can be specified include a spatial tranpose (<code>'transpose':'True</code>),
+	a fractional-composition based y-axis display (<code>'pctMode':True</code>), and autogeneration of image files bypassing the pyplot session (<code>'gMode':'Headless', 'gFile'=$outfile</code>) </p>
+<hr>
+
+
+	<a href="tutorial.html">Previous page: <b>Introduction to SequenceObjs</b></a><br>	
+	<a href="tutorial_DB.html">Next page: <b>Database Interaction</b></a><br>
+		
+	</body>
+</html>

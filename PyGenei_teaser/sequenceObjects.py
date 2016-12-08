@@ -351,14 +351,14 @@ def guessAlp(seq, alpList=defaultAlps):
         j=0        
         for j in range(0,sl):
             if seq[j] not in alp.keys:
-                print 'illegal char for ' + alp.name + ': ' + seq[j]+'@'+str(j) 
+                #print 'illegal char for ' + alp.name + ': ' + seq[j]+'@'+str(j) 
                 legalString = False
         if legalString:
-            print 'legal string for ' + alp.name
+            #print 'legal string for ' + alp.name
             if ((alpGuess == 'X') and (alpFound == False)):
                 alpGuess = alp.name
             alpFound=True
-        print 'alpGuess = '+ alpGuess
+        #print 'alpGuess = '+ alpGuess
     return alpGuess
 
 def makeSeq(seqString, alp='N', sid='default'):
@@ -409,8 +409,10 @@ def retrieveFromDDBJ(acid, form='fasta', fileLoc='default', fileName='default', 
     if fileLoc == 'default':
         import os
         thisdir=os.getcwd()
-        fileLoc=thisdir+'/FASTAfiles'
-        if 'FASTAfiles' not in os.listdir('.'):
+        fileLoc=thisdir+'/data/FASTAfiles'
+        if 'data' not in os.listdir('.'):
+            os.mkdir(fileLoc)
+        if 'FASTAfiles' not in os.listdir('./data'):
             os.mkdir(fileLoc)
     filePath=fileLoc+'/'+fileName+'.'+form
     f=open(filePath, 'w')
@@ -467,7 +469,7 @@ class Organism(object):
 #It makes this call in a generalized format, specifying the specific routine name, sequence(s), and run parameters
 #Obviously, the metadata (specsInputDict) will be highly individual for each specific MetricRoutine 
 class Metric(object):
-    def __init__(self, typeName, seqList=[], specsInputDict={}, specsOutputDict={}, runName=None, seqidList=[], superdict={}, runme=False): #specsDict is params fed in, outDict is params returned
+    def __init__(self, typeName, seqList=[], specsInputDict={}, specsOutputDict={}, runName=None, seqidList=[], superdict={}, runme=True): #specsDict is params fed in, outDict is params returned
 
         if len(seqList)>0:        
             self.seqList=seqList
@@ -485,13 +487,13 @@ class Metric(object):
         #self.runDate=
         #self.runtime=
     
-    def runMetric(self, typeName, seqList, specsDict):
+    def runMetric(self, typeName, seqList, specsInputDict):
         import MetricRoutines
         typeList=MetricRoutines.RoutineList
         if typeName not in typeList:
             print 'ERROR: requested Metric (%s) not found in master RoutineList' % (typeName)
         else:
-            self.specsOutputDict=MetricRoutines.runMetric(typeName, seqList, specsDict)
+            self.specsOutputDict=MetricRoutines.runMetric(typeName, seqList, specsInputDict)
     
 #This is primarily just an identifiable wrapper for a translation dictionary, or cdict    
 class codonTable(object):
